@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from werkzeug.utils import secure_filename
 from PIL import Image
+import os
 
 app = Flask('MyApp')
 
@@ -200,7 +201,7 @@ def func7(planet_name):
     planet_name = planet_name.capitalize()
     planets = {
         'Меркурий': ['Есть вода и атмосфера;',
-                     'Огромные запасами солнечной энергии;', 'Полное отсутствие атмосферы.'],
+                     'Огромные запасы солнечной энергии;', 'Полное отсутствие атмосферы.'],
         'Венера': ['Вода практически полностью отсутствует;', 'Большие температуры;', 'Много углекислого газа.'],
         'Земля': ['Наш дом', 'Не требует колонизации', '(=^･ｪ･^=)'],
         'Марс': ['Эта планета близка к Земле;', 'На ней есть вода и атмосфера;',
@@ -332,8 +333,8 @@ def func10():
                                <title>Отбор астронавтов</title>
                               </head>
                               <body>
-                                <h1>Загрузка фотографии</h1>
-                                <h2>для участия в миссии</h2>
+                                <h1 align="center">Загрузка фотографии</h1>
+                                <h2 align="center">для участия в миссии</h2>
                                 <div>
                                     <form class="login_form" method="post" enctype="multipart/form-data">
                                         <div class="form-group">
@@ -348,16 +349,16 @@ def func10():
                             </html>'''
     elif request.method == 'POST':
         file = request.files['file']
-        file.filename = 'file.jpg'
         filename = secure_filename(file.filename)
+        file.filename = 'file.jpg'
         file.save('static/img/file.jpg')
-
-        img = Image.open('static/img/file.jpg')
-        width, height = img.size
-        new_image = img.resize((425, int(height // (width / 425))))
-        new_image.save('static/img/file.jpg')
+        result = os.stat('static/img/file.jpg')
+        if result.st_size:
+            img = Image.open('static/img/file.jpg')
+            width, height = img.size
+            new_image = img.resize((425, int(height // (width / 425))))
+            new_image.save('static/img/file.jpg')
         return redirect('/load_foto')
-
 
 # app.route('/<title>')
 # app.route('/index/<title>')
